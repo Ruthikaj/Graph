@@ -1,0 +1,40 @@
+vector<int> shortestPath(vector<vector<int>>& edges, int n,int m, int src){
+        // code here
+        vector<int> dist(n,INT_MAX);
+        vector<int> vis(n,0);
+        
+        vector<int> adj[n];
+        
+        for(int i=0;i<m;i++){
+            int u=edges[i][0];
+            int v=edges[i][1];
+            
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+        
+        queue<pair<int,int>> q;
+        q.push({src,0});
+        vis[src]=1;
+        
+        while(!q.empty()){
+            int node=q.front().first;
+            int cnt=q.front().second;
+            q.pop();
+            
+            dist[node]=cnt;
+            
+            for(auto it : adj[node]){
+                if(!vis[it]){
+                    vis[it]=1;
+                    q.push({it,cnt+1});
+                }
+            }
+        }
+        
+        for(int i=0;i<n;i++){
+            if(dist[i]==INT_MAX)
+            dist[i]=-1;
+        }
+        return dist;
+    }
