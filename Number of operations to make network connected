@@ -1,31 +1,54 @@
 class Solution {
 public:
-    int find(vector<int>& parent,int i){
-        if(parent[i]!=i){
-            parent[i]=find(parent,parent[i]);
+    // This function helps us find the "ultimate parent" (root) of the computer 'i'.
+    int find(vector<int>& parent, int i) {
+        // If the computer 'i' is not its own parent, it means it's connected to another computer.
+        if (parent[i] != i) {
+            // Recursively find the ultimate parent and update 'parent[i]' to that parent.
+            parent[i] = find(parent, parent[i]);
         }
+        // Return the ultimate parent of 'i'.
         return parent[i];
     }
-    int makeConnected(int n, vector<vector<int>>& connections) {
-        int edges=connections.size();
-        if(edges<n-1)   return -1;
 
+    // This function calculates the minimum number of moves to connect all computers in the network.
+    int makeConnected(int n, vector<vector<int>>& connections) {
+        // 'edges' is the total number of cables (connections) between computers.
+        int edges = connections.size();
+
+        // If there are fewer cables than 'n - 1', it's impossible to connect all computers.
+        if (edges < n - 1) return -1;
+
+        // Create a 'parent' array where each computer is its own parent initially.
         vector<int> parent(n);
-        for(int i=0;i<n;i++){
-            parent[i]=i;
+        for (int i = 0; i < n; i++) {
+            parent[i] = i; // Each computer points to itself (self-parenting).
         }
 
-        int cnt=n;
-        for(int i=0;i<edges;i++){
-            int u=connections[i][0];
-            int v= connections[i][1];
-            int pu=find(parent,u);
-            int pv= find(parent,v);
-            if(pu!=pv){
-                parent[pu]=pv;
+        // 'cnt' is the number of groups of computers. Initially, each computer is a separate group.
+        int cnt = n;
+
+        // Loop through each connection (cable) in the 'connections' list.
+        for (int i = 0; i < edges; i++) {
+            int u = connections[i][0]; // 'u' is the first computer in the connection.
+            int v = connections[i][1]; // 'v' is the second computer in the connection.
+
+            // Find the ultimate parents of both 'u' and 'v'.
+            int pu = find(parent, u);  // Find the parent of 'u'.
+            int pv = find(parent, v);  // Find the parent of 'v'.
+
+            // If the parents are different, it means 'u' and 'v' are in different groups.
+            if (pu != pv) {
+                // Connect the two groups by making 'pv' the parent of 'pu'.
+                parent[pu] = pv;
+
+                // Since two groups are now connected, we reduce the group count.
                 cnt--;
             }
         }
-        return cnt-1;
+
+        // After connecting as many groups as possible, the remaining number of moves
+        // required to connect all groups is 'cnt - 1'.
+        return cnt - 1;
     }
 };
