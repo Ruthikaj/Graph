@@ -1,0 +1,31 @@
+class Solution {
+public:
+    int find(vector<int>& parent,int i){
+        if(parent[i]!=i){
+            parent[i]=find(parent,parent[i]);
+        }
+        return parent[i];
+    }
+    int makeConnected(int n, vector<vector<int>>& connections) {
+        int edges=connections.size();
+        if(edges<n-1)   return -1;
+
+        vector<int> parent(n);
+        for(int i=0;i<n;i++){
+            parent[i]=i;
+        }
+
+        int cnt=n;
+        for(int i=0;i<edges;i++){
+            int u=connections[i][0];
+            int v= connections[i][1];
+            int pu=find(parent,u);
+            int pv= find(parent,v);
+            if(pu!=pv){
+                parent[pu]=pv;
+                cnt--;
+            }
+        }
+        return cnt-1;
+    }
+};
